@@ -1,13 +1,30 @@
-import React from 'react'
-import { View, Text } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
+import "react-native-gesture-handler";
+import { View, Text } from "react-native";
+import React, { useEffect, useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-function DetailScreen() {
+import { createDrawerNavigator } from "@react-navigation/drawer";
+import UserDetailScreen from "./UserDetailScreen";
+import StaffDetailScreen from "./StaffDetailScreen";
+import ContinentScreen from "./ContinentScreen";
+import LogOutScreen from "./LogOutScreen";
+
+const DetailScreen = ({ route }) => {
+  const Drawer = createDrawerNavigator();
+  const { userId } = route.params;
   return (
-    <SafeAreaView>
-    <Text>detailsView</Text>
-    </SafeAreaView>
-  )
-}
+    <Drawer.Navigator useLegacyImplementation>
+      <Drawer.Screen
+        name="home"
+        component={UserDetailScreen}
+        options={{ drawerLabel: "Home" }}
+        initialParams={{ userId: userId }}
+      />
+      <Drawer.Screen name="staff" component={StaffDetailScreen} options={{ drawerLabel: "Staff" }} />
+      <Drawer.Screen name="continents" component={ContinentScreen} options={{ drawerLabel: "Continents" }} />
+      <Drawer.Screen name="log out" component={LogOutScreen} options={{ drawerLabel: "Log Out" }} />
+    </Drawer.Navigator>
+  );
+};
 
-export default DetailScreen
+export default DetailScreen;
