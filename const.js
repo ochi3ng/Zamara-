@@ -1,0 +1,1 @@
+export const base_url = "https://crudcrud.com/api/697b0eec0b6f4c2fa4e178eefd2ab690/zamara";
