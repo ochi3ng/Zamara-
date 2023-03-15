@@ -25,6 +25,9 @@ function DetailScreen({ route }) {
                     ZAMARA APP
                 </Text>
             </View>
+            {!user ? <View style={styles.loading}>
+                <Text style={styles.loadingdetail}>Loading please wait...</Text>
+            </View> : <>
             <View style={styles.outerview}>
                 <View style={styles.moredetails}>
                     <Text style={styles.detailscontainer}>Welcome</Text>
@@ -35,7 +38,7 @@ function DetailScreen({ route }) {
                         Your profile details is as below:
                     </Text>
                 </View>
-               {loading ? <Text>Loading ...</Text> : <>
+               
                     <View style={styles.Agedetails}>
                         <Text style={styles.detailscontainer}>Age:</Text>
                         <Text style={styles.detailsText}>{user?.age}</Text>
@@ -71,9 +74,10 @@ function DetailScreen({ route }) {
                     <View style={styles.genderdetails}>
                         <Text style={styles.detailscontainer}>EyeColor:</Text>
                         <Text style={styles.detailsText}> {user?.eyeColor}</Text>
-                    </View></>}
+                    </View>
 
             </View>
+            </>}
         </SafeAreaView>
     )
 }
@@ -124,6 +128,13 @@ const styles = StyleSheet.create({
         marginLeft: 3,
         textDecorationLine: 'underline',
         textDecorationColor: 'red',
+    },
+    loading:{
+    minHeight:300,
+    justifyContent: 'center'
+    },
+    loadingdetail:{
+        fontSize:20,
     }
 
 })

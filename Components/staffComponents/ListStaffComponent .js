@@ -127,7 +127,7 @@ const CustomeModal = ({ setModalVisible, modalVisible, item, setRefetch }) => {
       transparent={true}
       visible={modalVisible}
       onRequestClose={() => {
-        Alert.alert("Modal has been closed.");
+        navigation.navigate("list"); 
       }}
     >
       <View style={styles.containerk} >
@@ -198,11 +198,12 @@ const DeleteModal = ({ setDeleteModalVisible, modalVisible, item, setRefetch }) 
       }}
     >
       <View style={styles.containerr}>
-        <View style={styles.textcontainer}>
-          <Text style={styles.hellotext}>Hello </Text>
-          <Text style={styles.name}>{item.name}, </Text>
+        
+        <View>
+          <Text style={styles.deletettext}>Are you sure you want to delete this staff,</Text>
+          <Text style={styles.name}>{item.name}? </Text>
         </View>
-        <Text style={styles.deletettext}>are you sure you want to delete this staff?</Text>
+        
         <View style={styles.Cancelbuttons}>
           <TouchableOpacity onPress={deleteUser}>
             <Text style={styles.confirm}>Confirm</Text>
@@ -403,7 +404,6 @@ const styles = StyleSheet.create({
   },
   deletettext: {
     color: 'white',
-    marginBottom: 15
   },
   updatetext:{
     fontWeight: 'bold',

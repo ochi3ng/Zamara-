@@ -4,9 +4,9 @@ import React, { useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const LoginScreen = ({ navigation }) => {
-    const [name, onNameChange] = useState("kminchelle");
-    const [password, onPasswordChange] = useState("0lelplR");
-    const [user, setUser] = useState();
+    const [name, onNameChange] = useState();
+    const [password, onPasswordChange] = useState();
+
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(false);
 
@@ -23,8 +23,6 @@ const LoginScreen = ({ navigation }) => {
             .then((res) =>
                 res.json().then((data) => {
                     setLoading(false);
-                    setUser(data);
-                    console.log(data);
                     if (data.token !== undefined) {
                         setError(false);
                         AsyncStorage.setItem("sessionToken", JSON.stringify(data.id));
@@ -32,6 +30,7 @@ const LoginScreen = ({ navigation }) => {
                         return;
                     }
                     setError(true);
+
                 }) 
             )
             .catch((err) => {
