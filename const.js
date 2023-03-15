@@ -1,1 +1,1 @@
-export const base_url = "https://crudcrud.com/api/697b0eec0b6f4c2fa4e178eefd2ab690/zamara";
+export const base_url = "https://crudcrud.com/api/2b860970985d4375b315605138b8f48f/zamara";

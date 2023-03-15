@@ -11,7 +11,7 @@ import LogOutScreen from "./LogOutScreen";
 
 const DetailScreen = ({ route }) => {
   const Drawer = createDrawerNavigator();
-  const { userId } = route.params;
+  const { userId, name } = route.params;
   return (
     <Drawer.Navigator useLegacyImplementation>
       <Drawer.Screen
@@ -22,7 +22,7 @@ const DetailScreen = ({ route }) => {
       />
       <Drawer.Screen name="staff" component={StaffDetailScreen} options={{ drawerLabel: "Staff" }} />
       <Drawer.Screen name="continents" component={ContinentScreen} options={{ drawerLabel: "Continents" }} />
-      <Drawer.Screen name="log out" component={LogOutScreen} options={{ drawerLabel: "Log Out" }} />
+      <Drawer.Screen name="log out" component={LogOutScreen} options={{ drawerLabel: "Log Out" }} initialParams={{ userId: userId, name: name }} />
     </Drawer.Navigator>
   );
 };

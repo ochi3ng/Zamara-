@@ -28,7 +28,7 @@ const LoginScreen = ({ navigation }) => {
                     if (data.token !== undefined) {
                         setError(false);
                         AsyncStorage.setItem("sessionToken", JSON.stringify(data.id));
-                        navigation.push("details", {userId: data.id});
+                        navigation.push("details", {userId: data.id, name:name});
                         return;
                     }
                     setError(true);
