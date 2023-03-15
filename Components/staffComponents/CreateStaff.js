@@ -30,7 +30,7 @@ const CreateStaff = () => {
             .then((res) =>
                 res.json().then((data) => {
                     setLoading(false);
-                    navigation.navigate('home')
+                    navigation.navigate('list')
                 })
             )
             .catch(() => {
@@ -71,6 +71,9 @@ const CreateStaff = () => {
                         <TouchableOpacity style={styles.createbutton}>
                             <Text style={styles.createstaff} onPress={createUser}>CREATE STAFF</Text>
                         </TouchableOpacity>
+                            <TouchableOpacity style={styles.createcancelbutton}>
+                                <Text style={styles.createstaff} onPress={() => navigation.navigate('list')}>CANCEL</Text>
+                            </TouchableOpacity>
                     </View>
                 </View>
             )}
@@ -126,6 +129,15 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         borderRadius: 11,
         marginTop: 10
+    },
+    createcancelbutton:{
+        backgroundColor: 'red',
+        height: 60,
+        alignItems: 'center',
+        textAlign: 'center',
+        justifyContent: 'center',
+        borderRadius: 11,
+        marginTop: 10 
     },
     createstaff: {
         color: 'white',

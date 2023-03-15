@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
          flex: 1,
           justifyContent: "center",
            alignItems: "center" ,
-        backgroundColor: 'rgb(31,31,61)'
+        backgroundColor: 'gray'
 },
     textcontainer:{
     flexDirection: 'row', 
@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
   name:{
     fontWeight:'bold',
     fontSize:25,
-    color:'white'
+
   } ,
   confirm:{
       backgroundColor:'blue',

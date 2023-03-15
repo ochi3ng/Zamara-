@@ -1,6 +1,6 @@
 import "react-native-gesture-handler";
 import { View, Text } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { createDrawerNavigator } from "@react-navigation/drawer";

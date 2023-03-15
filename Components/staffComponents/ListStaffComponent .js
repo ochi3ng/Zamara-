@@ -4,11 +4,15 @@ import { base_url } from "../../const";
 import { useNavigation } from "@react-navigation/native";
 import  DeleteIcon  from "react-native-vector-icons/AntDesign";
 import EditIcon from "react-native-vector-icons/AntDesign";
-const Item = ({ item }) => {
+
+ import { useIsFocused } from '@react-navigation/native';
+ 
+const Item = ({ item, setRefetch }) => {
   const [modalVisible, setModalVisible] = useState(false);
+  const [deleteModalVisible, setDeleteModalVisible]= useState(false);
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <TouchableOpacity onPress={() => setModalVisible(true)}>
+     
        <View style={styles.containerlist}>
           <View style={styles.table}>
             <Text style={styles.headerText}>{item.name}</Text>
@@ -17,48 +21,59 @@ const Item = ({ item }) => {
             <Text style={styles.headerText}>{item.department}</Text>
             <Text style={styles.headerText}>{item.salary}</Text>
             <View style={styles.icons}>
-              <Text><DeleteIcon name="delete" /></Text>
+               <TouchableOpacity onPress={() => setModalVisible(true)}>
               <Text><EditIcon name="edit" /></Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => setDeleteModalVisible(true)}>
+              <Text><DeleteIcon name="delete" /></Text>
+            </TouchableOpacity>
             </View>
           
           </View>
           <View style={styles.underline} />
        </View>
-      </TouchableOpacity>
-      <CustomeModal setModalVisible={setModalVisible} modalVisible={modalVisible} item={item} />
-      <DeleteModal setModalVisible={setModalVisible} modalVisible={modalVisible} item={item} />
+      
+      <CustomeModal setModalVisible={setModalVisible} modalVisible={modalVisible} item={item} setRefetch={setRefetch}/>
+      <DeleteModal setDeleteModalVisible={setDeleteModalVisible} modalVisible={deleteModalVisible} item={item} setRefetch={setRefetch} />
     </View>
   );
 };
 
 const ListStaffComponent = () => {
+  const navigation= useNavigation()
   const [user, setUser] = useState();
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
+  const [refetch, setRefetch]= useState(false)
+   const isFocused = useIsFocused();
+
   useEffect(() => {
-    fetch(base_url)
-      .then((res) =>
-        res.json().then((data) => {
+    if (isFocused){
+      fetch(base_url)
+        .then((res) =>
+          res.json().then((data) => {
+            setLoading(false);
+            setUser(data);
+          })
+        )
+        .catch((err) => {
+          console.log(err);
           setLoading(false);
-          setUser(data);
-        })
-      )
-      .catch((err) => {
-        console.log(err);
-        setLoading(false);
-      });
-  }, []);
+        });
+        setRefetch(false)
+    }
+  
+  }, [isFocused, refetch]);
   return (
     <View style={styles.containerv}>
       <View style={styles.createstaffbutton}>
-      <TouchableOpacity style={styles.listbutton}>
+      <TouchableOpacity style={styles.listbutton} onPress={()=> navigation.navigate('list')}>
           <Text style={styles.listtext}>
-            ListStaff
+            List staff
           </Text>
       </TouchableOpacity>
-        <TouchableOpacity style={styles.staffbutton}>
+        <TouchableOpacity style={styles.staffbutton} onPress={()=> navigation.navigate("create")}>
           <Text style={styles.createtext}>
-            createstaff
+            Create  staff
           </Text>
       </TouchableOpacity>
       </View>
@@ -72,14 +87,14 @@ const ListStaffComponent = () => {
         <Text style={styles.textContainer}>Action</Text>
       
       </View>
-      <FlatList data={user} renderItem={({ item }) => <Item item={item} />} keyExtractor={(item) => item._id} />
+      <FlatList data={user} renderItem={({ item }) => <Item item={item} setRefetch={setRefetch}/>} keyExtractor={(item) => item._id} />
     </View>
   );
 };
 
 export default ListStaffComponent;
 
-const CustomeModal = ({ setModalVisible, modalVisible, item }) => {
+const CustomeModal = ({ setModalVisible, modalVisible, item, setRefetch }) => {
   const navigation = useNavigation();
   const [name, onNameChange] = useState(item.name);
   const [number, onNumberChange] = useState(item.number);
@@ -97,9 +112,14 @@ const CustomeModal = ({ setModalVisible, modalVisible, item }) => {
         department: department,
         salary: salary
       }),
-    });
+    }); 
+    setRefetch(true)
     setModalVisible(false);
     navigation.navigate("list");
+  };
+  const CancleUpdate =()=>{
+    setModalVisible(false);
+    navigation.navigate("list"); 
   };
   return (
     <Modal
@@ -110,8 +130,12 @@ const CustomeModal = ({ setModalVisible, modalVisible, item }) => {
         Alert.alert("Modal has been closed.");
       }}
     >
-      <View >
+      <View style={styles.containerk} >
       <View style={styles.inercontainer}>
+          <View style={styles.updatetextcontainer}>
+            <Text style={styles.update}>Update details for user </Text>
+            <Text style={styles.updatetext}>{item.name}</Text>
+        </View>
         <View>
           <Text style={styles.number}>Staff Name</Text>
           <TextInput style={styles.numberinput} value={name} onChangeText={onNameChange} placeholder="Staff name" />
@@ -139,19 +163,30 @@ const CustomeModal = ({ setModalVisible, modalVisible, item }) => {
         <TouchableOpacity style={styles.createbutton}>
           <Text style={styles.createstaff} onPress={updateUser}>Update</Text>
         </TouchableOpacity>
+          <TouchableOpacity style={styles.cancelcreatebutton}>
+            <Text style={styles.createstaff} onPress={CancleUpdate}>Cancel</Text>
+          </TouchableOpacity>
       </View>
     </View>
     </Modal>
   );
 };
 
-const DeleteModal = ({ setModalVisible, modalVisible, item }) => {
-  const updatUser = () => {
+const DeleteModal = ({ setDeleteModalVisible, modalVisible, item, setRefetch }) => {
+  const navigation = useNavigation();
+  const deleteUser = () => {
     fetch(`${base_url}/${item._id}`, {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
     });
+    setRefetch(true)
+    setDeleteModalVisible(false);
     navigation.navigate("list");
+  };
+
+  const CancelDelete =() =>{
+    setDeleteModalVisible(false)
+    navigation.navigate("list")
   };
   return (
     <Modal
@@ -159,15 +194,35 @@ const DeleteModal = ({ setModalVisible, modalVisible, item }) => {
       transparent={true}
       visible={modalVisible}
       onRequestClose={() => {
-        Alert.alert("Modal has been closed.");
+        navigation.navigate("staff")
       }}
     >
-      Delete modal
+      <View style={styles.containerr}>
+        <View style={styles.textcontainer}>
+          <Text style={styles.hellotext}>Hello </Text>
+          <Text style={styles.name}>{item.name}, </Text>
+        </View>
+        <Text style={styles.deletettext}>are you sure you want to delete this staff?</Text>
+        <View style={styles.Cancelbuttons}>
+          <TouchableOpacity onPress={deleteUser}>
+            <Text style={styles.confirm}>Confirm</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={CancelDelete}>
+            <Text style={styles.cancel}>Cancel</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
     </Modal>
   );
 };
 
 const styles = StyleSheet.create({
+  containerk: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: 'gray'
+  },
   container: {
     flex: 1,
     justifyContent: 'center',
@@ -201,7 +256,9 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     marginLeft: 9,
     padding: 10,
-    marginRight: 9
+    marginRight: 9,
+
+
   },
   display: {
     flexDirection: 'row',
@@ -211,6 +268,12 @@ const styles = StyleSheet.create({
   },
   createbutton: {
     backgroundColor: 'rgb(31,31,61)',
+    height: 60,
+    alignItems: 'center',
+    textAlign: 'center',
+    justifyContent: 'center',
+    borderRadius: 11,
+    marginTop: 30
   
 
   },
@@ -291,5 +354,78 @@ const styles = StyleSheet.create({
   },
   createtext: {
     color: 'white'
+  },
+  deletecontainer:{
+   backgroundColor:'red'
+  },
+  confirm: {
+    backgroundColor: 'blue',
+    height: 40,
+    width: 130,
+    alignItems: 'center',
+    textAlign: 'center',
+    color: 'white',
+    paddingTop: 9,
+    justifyContent: 'center',
+    marginRight: 20,
+    borderRadius: 10
+
+  },
+  cancel: {
+    backgroundColor: 'green',
+    height: 40,
+    width: 150,
+    textAlign: 'center',
+    color: 'white',
+    paddingTop: 9,
+    borderRadius: 10
+  },
+  name: {
+    fontWeight: 'bold',
+    fontSize: 25,
+
+  },
+  hellotext: {
+    fontSize: 25,
+    color: 'white'
+  },
+  containerr:{
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: 'gray'
+  },
+  textcontainer: {
+    flexDirection: 'row',
+  },
+  Cancelbuttons: {
+    flexDirection: 'row',
+  },
+  deletettext: {
+    color: 'white',
+    marginBottom: 15
+  },
+  updatetext:{
+    fontWeight: 'bold',
+    fontSize: 20,
+    color:'white'
+  },
+  update: {
+    fontSize: 20,
+    color: 'white'
+  },
+  updatetextcontainer:{
+    flexDirection: 'row',
+    backgroundColor: 'rgb(31,31,61)',
+    padding:10
+  },
+  cancelcreatebutton:{
+    backgroundColor: 'rgb(31,31,61)',
+    height: 60,
+    alignItems: 'center',
+    textAlign: 'center',
+    justifyContent: 'center',
+    borderRadius: 11,
+    marginTop: 20
   }
 })
